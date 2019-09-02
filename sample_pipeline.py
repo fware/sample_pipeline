@@ -48,11 +48,7 @@ class SamplePipeline:
         while count < 5500:
             crop, norm_label = iterator.get_next()
             crop_img = np.asarray(crop)
-            #crop_img = image.img_to_array(crop)
             crop_img = np.expand_dims(crop_img, axis=0)
-            #print(crop_img.shape)
-            #crop_img = preprocess_input(crop_img)
-            #print('Input image shape:', crop_img.shape)
             crop_list.append(crop_img)
             label_list.append(norm_label)
             count += 1

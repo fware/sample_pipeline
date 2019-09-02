@@ -12,11 +12,8 @@ from keras.layers import Input
 from keras.models import Model
 from keras.utils import np_utils
 
-#from keras.applications.resnet50 import ResNet50
 from keras.preprocessing import image
 from keras.layers import GlobalAveragePooling2D, Dense, Dropout,Activation,Flatten
-#from official.vision.image_classification import common
-#from official.vision.image_classification import imagenet_preprocessing
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 
@@ -38,12 +35,11 @@ def run_sample_pipeline():
             if file.find("tfrecord") != -1:
                 files.append('./TFRecords/%s' % file)
 
+        # Create dataset
         crop_list, label_list = pipeline.input_pipeline(files, 1)
 
-        #crop_images = np.array(crop_list)
         label_set = np.array(label_list)
         Y = np.asarray(label_list)
-        #Y = np_utils.to_categorical(label_set, num_classes)
 
         x, y = shuffle(crop_list, Y, random_state=2)
         x_np = np.asarray(x)
@@ -55,21 +51,11 @@ def run_sample_pipeline():
         print(y_test.shape)
 
 
-        #model = tf.keras.Sequential([
-        #                                # Adds a densely-connected layer with 64 units to the model:
-        #                                layers.Dense(64, activation='relu', input_shape=(32,)),
-        #                                # Add another:
-        #                                layers.Dense(64, activation='relu'),
-        #                                # Add a softmax layer with 10 output units:
-        #                                layers.Dense(10, activation='softmax')
-        #                            ])
-
-        #lr_schedule =  0.1
-        #optimizer = common.get_optimizer(lr_schedule)
         image_input = Input(shape=(224, 224, 3))
-        #model = keras.applications.resnet.ResNet50(weights='imagenet')
         model = ResNet50(input_tensor=image_input, include_top=True,weights='imagenet')
         model.summary()
+
+        #Add final layer
         final_layer = model.get_layer('avg_pool').output
         x = Flatten(name='flatten')(final_layer)
         out = Dense(num_classes, activation='softmax', name='output_layer')(x)
@@ -81,18 +67,8 @@ def run_sample_pipeline():
 
         custom_model.layers[-1].trainable
 
-        #train_model = keras.models.Model(inputs=model_input, outputs=model)
-
-        #model.compile(optimizer=tf.train.AdamOptimizer(0.001),
-        #              loss='categorical_crossentropy',
-        #              metrics=['accuracy'])
-
         custom_model.compile(loss='sparse_categorical_crossentropy',
           optimizer='adam', metrics=['accuracy'])
-
-        #custom_model.fit(model_input, norm_label, epochs=5, batch_size=32, 
-        #    steps_per_epoch=10, verbose=1)
-
 
         t=time.time()
         train_hist = custom_model.fit(x_train, y_train, batch_size=32, epochs=12, 
@@ -101,22 +77,6 @@ def run_sample_pipeline():
 
         (loss, accuracy) = custom_model.evaluate(x_test, y_test, batch_size=10, verbose=1)
         print("loss={:4f}, accuracy: {:.4f}%".format(loss, accuracy * 100))
-
-        #Add final layer
-        #final_layer = base_model.output
-        #final_layer = Flatten()(final_layer)
-        #predictions = tf.keras.layers.Dense(100, activation='softmax')(final_layer)
-
-        #model = Model(input=base_model.input, output=predictions)
-
-        #model.compile(optimizer=keras.optimizers.SGD(lr=0.01, momentum=0.9, nesterov=True), 
-        #                loss=keras.losses.categorical_crossentropy)
-
-        #classifier = tf.estimator.Estimator(model_fn=cnn_model_fn, model_dir=/tmp/resnet_models)
-
-        #tensors_to_log = {"probabilities": "softmax_tensor"}
-        #logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=50)
-        #classifier.train(input_fn=lambda: train_input_fn(train_list), steps=10, hooks=[logging_hook])
 
 
         #ctr = 0
