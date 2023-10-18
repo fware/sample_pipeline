@@ -1,8 +1,5 @@
 /**
-@file warpPerspective_demo.cpp
-@brief a demo program shows how perspective transformation applied on an image
-@based on a sample code http://study.marearts.com/2015/03/image-warping-using-opencv.html
-@modified by Suleyman TURKMEN
+* warpImages.cpp
 */
 
 #include "opencv2/imgproc.hpp"
