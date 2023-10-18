@@ -1,5 +1,4 @@
-// Brief Sample of using OpenCV dnn module in real time with device capture, video and image.
-// VIDEO DEMO: https://www.youtube.com/watch?v=NHtRlndE2cg
+// Detecting a Time magazine cover.
 
 #include <opencv2/dnn.hpp>
 #include <opencv2/dnn/shape_utils.hpp>
