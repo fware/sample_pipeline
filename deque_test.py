@@ -22,7 +22,7 @@ print("This should be the most recent added value to the Queue")
 print(f"{popped_value}")
 
 popped_value = de.popleft()
-print("This should be the 1st (or the left most) added value to the Queue")
+print("This should be the 1st added value to the Queue (or the left most)")
 print(f"{popped_value}")
 
 

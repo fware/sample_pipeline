@@ -17,14 +17,14 @@ class LogitRegression():
         self.iterations = iterations
 
     # Function for model training
-    def fit(self, X, Y):
+    def fit(self, x, y):
         # no_of_training_examples, no_of_features
-        self.m, self.n = X.shape
+        self.m, self.n = x.shape
         # weight initialization
-        self.W = np.zeros(self.n)
+        self.w = np.zeros(self.n)
         self.b = 0
-        self.X = X
-        self.Y = Y
+        self.x = x
+        self.y = y
 
         # gradient descent learning
 
@@ -33,28 +33,27 @@ class LogitRegression():
         return self
 
     # Helper function to update weights in gradient descent
-
     def update_weights(self):
-        A = 1 / (1 + np.exp(- (self.X.dot(self.W) + self.b)))
+        A = 1 / (1 + np.exp(- (self.x.dot(self.w) + self.b)))
 
         # calculate gradients
-        tmp = (A - self.Y.T)
+        tmp = (A - self.y.T)
         tmp = np.reshape(tmp, self.m)
-        dW = np.dot(self.X.T, tmp) / self.m
+        dW = np.dot(self.x.T, tmp) / self.m
         db = np.sum(tmp) / self.m
 
         # update weights
-        self.W = self.W - self.learning_rate * dW
+        self.w = self.w - self.learning_rate * dW
         self.b = self.b - self.learning_rate * db
 
         return self
 
     # Hypothetical function h( x )
 
-    def predict(self, X):
-        Z = 1 / (1 + np.exp(- (X.dot(self.W) + self.b)))
-        Y = np.where(Z > 0.5, 1, 0)
-        return Y
+    def predict(self, x):
+        Z = 1 / (1 + np.exp(- (x.dot(self.w) + self.b)))
+        y = np.where(Z > 0.5, 1, 0)
+        return y
 
     # Driver code
 
@@ -62,23 +61,23 @@ class LogitRegression():
 def main():
     # Importing dataset
     df = pd.read_csv("diabetes.csv")
-    X = df.iloc[:, :-1].values
-    Y = df.iloc[:, -1:].values
+    x = df.iloc[:, :-1].values
+    y = df.iloc[:, -1:].values
 
     # Splitting dataset into train and test set
-    X_train, X_test, Y_train, Y_test = train_test_split(
-        X, Y, test_size=1 / 3, random_state=0)
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=1 / 3, random_state=0)
 
     # Model training
-    model = LogitRegression(learning_rate=0.01, iterations=900)
+    model = LogitRegression(learning_rate=0.01, iterations=900)  # From the local class
+    model.fit(x_train, y_train)
 
-    model.fit(X_train, Y_train)
-    model1 = LogisticRegression()
-    model1.fit(X_train, Y_train)
+    model1 = LogisticRegression()   # From sklearn.linear_model
+    model1.fit(x_train, y_train)
 
     # Prediction on test set
-    Y_pred = model.predict(X_test)
-    Y_pred1 = model1.predict(X_test)
+    y_pred = model.predict(x_test)
+    y_pred1 = model1.predict(x_test)
 
     # measure performance
     correctly_classified = 0
@@ -86,12 +85,12 @@ def main():
 
     # counter
     count = 0
-    for count in range(np.size(Y_pred)):
+    for count in range(np.size(y_pred)):
 
-        if Y_test[count] == Y_pred[count]:
+        if y_test[count] == y_pred[count]:
             correctly_classified = correctly_classified + 1
 
-        if Y_test[count] == Y_pred1[count]:
+        if y_test[count] == y_pred1[count]:
             correctly_classified1 = correctly_classified1 + 1
 
         count = count + 1
